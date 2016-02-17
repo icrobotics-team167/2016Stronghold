@@ -8,35 +8,43 @@ import org.iowacityrobotics.lib167.drive.DriveType;
 
 public class Stronghold extends RobotBase<CANRobotDrive, TimedController<CANRobotDrive>> {
 
+	private BallBelt ballBelt;
+	private ShootDrive shootDrive;
+	private LogitechTankController secCont;
+	
 	@Override
 	protected void onInit() {
-		mainCont = new LogitechTankController(2, true);
-		drive = new CANRobotDrive(5, 2, 6, 3, DriveType.TANK_RAAF);
+		mainCont = new LogitechTankController(2, false); //true if TANK_RAAF, false if TANK
+		drive = new CANRobotDrive(1, 2, 8, 9, DriveType.TANK);
 		autoCont = new TimedController<>();
+		secCont = new LogitechTankController(3, false);
+		ballBelt = new BallBelt(4, 6);
+		shootDrive = new ShootDrive(3, 7);
 	}
 
 	@Override
 	protected void onAuto() {
-		// TODO Auto-generated method stub
-		
+		// NO-OP
 	}
 
 	@Override
 	protected void whileAuto() {
-		// TODO Auto-generated method stub
-		
+		// NO-OP
 	}
 
 	@Override
 	protected void onTeleop() {
-		// TODO Auto-generated method stub
-		
+		// NO-OP
 	}
 
 	@Override
 	protected void whileTeleop() {
-		// TODO Auto-generated method stub
+		double beltSpeed = -secCont.getAxis(1);
+		if (beltSpeed < 0.1D && beltSpeed > -0.1D)
+			beltSpeed = 0D;
 		
+		ballBelt.setState(beltSpeed);
+		shootDrive.setState(secCont.getAxis(3));
 	}
 	
 }
