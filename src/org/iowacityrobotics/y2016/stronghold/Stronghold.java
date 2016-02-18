@@ -14,7 +14,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, TimedController<CANRobo
 	
 	@Override
 	protected void onInit() {
-		mainCont = new LogitechTankController(2, false); //true if TANK_RAAF, false if TANK
+		mainCont = new ReversableController(2, false); //true if TANK_RAAF, false if TANK
 		drive = new CANRobotDrive(1, 2, 8, 9, DriveType.TANK);
 		autoCont = new TimedController<>();
 		secCont = new LogitechTankController(3, false);

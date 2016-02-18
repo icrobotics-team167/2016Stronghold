@@ -3,7 +3,6 @@ package org.iowacityrobotics.y2016.stronghold;
 import org.iowacityrobotics.lib167.component.IComponent;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.Talon;
 
 public class ShootDrive implements IComponent<Double> {
 	
@@ -11,7 +10,7 @@ public class ShootDrive implements IComponent<Double> {
 	private double speed;
 	
 	public ShootDrive(int l, int r) {
-		talons =new CANTalon[] {new CANTalon(l), new CANTalon(r)};
+		talons = new CANTalon[] {new CANTalon(l), new CANTalon(r)};
 	}
 	
 	@Override

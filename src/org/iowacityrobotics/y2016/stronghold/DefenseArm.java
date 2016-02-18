@@ -2,7 +2,6 @@ package org.iowacityrobotics.y2016.stronghold;
 
 import org.iowacityrobotics.lib167.component.IComponent;
 
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 
 public class DefenseArm implements IComponent<Double> {
