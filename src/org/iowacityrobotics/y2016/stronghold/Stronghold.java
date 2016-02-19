@@ -2,11 +2,11 @@ package org.iowacityrobotics.y2016.stronghold;
 
 import org.iowacityrobotics.lib167.RobotBase;
 import org.iowacityrobotics.lib167.control.LogitechTankController;
-import org.iowacityrobotics.lib167.control.auto.TimedController;
+import org.iowacityrobotics.lib167.control.auto.EncoderController;
 import org.iowacityrobotics.lib167.drive.CANRobotDrive;
 import org.iowacityrobotics.lib167.drive.DriveType;
 
-public class Stronghold extends RobotBase<CANRobotDrive, TimedController<CANRobotDrive>> {
+public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRobotDrive>> {
 
 	private BallBelt ballBelt;
 	private ShootDrive shootDrive;
@@ -16,7 +16,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, TimedController<CANRobo
 	protected void onInit() {
 		mainCont = new ReversableController(2, false); //true if TANK_RAAF, false if TANK
 		drive = new CANRobotDrive(1, 2, 8, 9, DriveType.TANK);
-		autoCont = new TimedController<>();
+		autoCont = new EncoderController<>();
 		secCont = new LogitechTankController(3, false);
 		ballBelt = new BallBelt(4, 6);
 		shootDrive = new ShootDrive(3, 7);
@@ -24,7 +24,9 @@ public class Stronghold extends RobotBase<CANRobotDrive, TimedController<CANRobo
 
 	@Override
 	protected void onAuto() {
-		// NO-OP
+		autoCont.clearQueue()
+				.queueAction(d -> d.drive(1D, 0D), 5.2D)
+				.queueAction(d -> d.stopMotor(), 0);
 	}
 
 	@Override
