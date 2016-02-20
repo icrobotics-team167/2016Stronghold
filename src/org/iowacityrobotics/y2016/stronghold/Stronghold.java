@@ -12,7 +12,8 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 	private ShootDrive shootDrive;
 	private LogitechTankController secCont;
 	private DefenseArm defArm;
-	private boolean isBack;
+	private long backingUp = 0L, buTimer = -1L;
+	private boolean yPressed = false;
 	
 	@Override
 	protected void onInit() {
@@ -44,13 +45,32 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 
 	@Override
 	protected void whileTeleop() {
-		double beltSpeed = -secCont.getAxis(1);
-		if (beltSpeed < 0.1D && beltSpeed > -0.1D)
-			beltSpeed = 0D;
-		
-		ballBelt.setState(beltSpeed);
-		shootDrive.setState(secCont.getAxis(3));
 		defArm.setState(secCont.getAxis(5) * (0.32D + secCont.getAxis(2) / 1.5D));
+		if (backingUp < 1L) {
+			double beltSpeed = -secCont.getAxis(1);
+			if (beltSpeed < 0.1D && beltSpeed > -0.1D)
+				beltSpeed = 0D;
+			ballBelt.setState(beltSpeed);
+			if (secCont.isPressed(2))
+				shootDrive.setState(-0.4D);
+			else
+				shootDrive.setState(secCont.getAxis(3));
+		} else {
+			if (buTimer != -1L)
+				backingUp -= System.currentTimeMillis() - buTimer;
+			buTimer = System.currentTimeMillis();
+			ballBelt.setState(0.4D);
+			shootDrive.setState(-0.4D);
+		}
+		
+		if (secCont.isPressed(4)) {
+			if (!yPressed) {
+				backingUp = 600L;
+				yPressed = true;
+			}
+		}
+		else
+			yPressed = false;
 	}
 	
 }
