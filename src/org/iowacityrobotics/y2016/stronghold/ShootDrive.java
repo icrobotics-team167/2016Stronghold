@@ -21,7 +21,9 @@ public class ShootDrive implements IComponent<Double> {
 
 	@Override
 	public void setState(Double value) throws UnsupportedOperationException {
-		speed = value;
+		speed = 0D;
+		while (speed + 0.05D < value)
+			speed += 0.05D;
 		SmartDashboard.putNumber("Shoot Speed", speed);
 		for (CANTalon t : talons)
 			t.set(0.9D * speed);
