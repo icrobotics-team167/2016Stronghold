@@ -1,16 +1,20 @@
 package org.iowacityrobotics.y2016.stronghold;
 
 import org.iowacityrobotics.lib167.component.IComponent;
+import org.iowacityrobotics.lib167.util.MathUtils;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class BallBelt implements IComponent<Double> {
 
 	private CANTalon[] talons;
+	private DigitalInput limit;
 	private double val;
 	
-	public BallBelt(int l, int r) {
+	public BallBelt(int l, int r, int limitId) {
 		talons = new CANTalon[] {new CANTalon(l), new CANTalon(r)};
+		limit = new DigitalInput(limitId);
 	}
 	
 	@Override
@@ -20,7 +24,7 @@ public class BallBelt implements IComponent<Double> {
 
 	@Override
 	public void setState(Double value) throws UnsupportedOperationException {
-		val = value;
+		val = MathUtils.clamp(value, -1D, limit.get() ? 1D : 0D);
 		for (CANTalon talon : talons)
 			talon.set(val);
 	}
