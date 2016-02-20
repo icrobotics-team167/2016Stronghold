@@ -49,7 +49,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		
 		ballBelt.setState(beltSpeed);
 		shootDrive.setState(secCont.getAxis(3));
-		defArm.setState(secCont.getAxis(7));
+		defArm.setState(secCont.getAxis(5) / 3D);
 	}
 	
 }
