@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class BallBelt implements IComponent<Double> {
 
-	private static final double LS_THRESHOLD = 0.3D;
 	private CANTalon[] talons;
 	private DigitalInput limit;
 	private double val;

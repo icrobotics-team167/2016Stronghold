@@ -3,6 +3,7 @@ package org.iowacityrobotics.y2016.stronghold;
 import org.iowacityrobotics.lib167.component.IComponent;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShootDrive implements IComponent<Double> {
 	
@@ -19,7 +20,9 @@ public class ShootDrive implements IComponent<Double> {
 	}
 
 	@Override
-	public void setState(Double speed) throws UnsupportedOperationException {
+	public void setState(Double value) throws UnsupportedOperationException {
+		speed = value;
+		SmartDashboard.putNumber("Shoot Speed", speed);
 		for (CANTalon t : talons)
 			t.set(0.9D * speed);
 	}

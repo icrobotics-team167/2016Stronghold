@@ -12,6 +12,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 	private ShootDrive shootDrive;
 	private LogitechTankController secCont;
 	private DefenseArm defArm;
+	private boolean isBack;
 	
 	@Override
 	protected void onInit() {

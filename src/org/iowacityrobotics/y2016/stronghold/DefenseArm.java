@@ -5,7 +5,6 @@ import org.iowacityrobotics.lib167.util.MathUtils;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DefenseArm implements IComponent<Double> {
 	
@@ -29,8 +28,6 @@ public class DefenseArm implements IComponent<Double> {
 
 	@Override
 	public void setState(Double value) throws UnsupportedOperationException {
-		SmartDashboard.putBoolean("top", top.get());
-		SmartDashboard.putBoolean("bot", bot.get());
 		val = MathUtils.clamp(value, top.get() ? -1D : 0D, bot.get() ? 1D : 0D);
 		armTalon.set(val);
 	}
