@@ -55,10 +55,12 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 				shootDrive.setState(-0.4D);
 			else
 				shootDrive.setState(secCont.getAxis(3));
+			buTimer = -1L;
 		} else {
+			long currentTime = System.currentTimeMillis();
 			if (buTimer != -1L)
-				backingUp -= System.currentTimeMillis() - buTimer;
-			buTimer = System.currentTimeMillis();
+				backingUp -= currentTime - buTimer;
+			buTimer = currentTime;
 			ballBelt.setState(0.4D);
 			shootDrive.setState(-0.4D);
 		}
