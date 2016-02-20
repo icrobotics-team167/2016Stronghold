@@ -22,6 +22,8 @@ local.properties
 .texlipse
 .sprintBeans
 .recommenders/
+build/
+dist/
 
 # JetBrains
 .idea/workspace.xml
