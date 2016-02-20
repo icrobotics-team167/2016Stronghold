@@ -23,14 +23,15 @@ public class DefenseArm implements IComponent<Double> {
 	@Override
 	public void setState(Double val) throws UnsupportedOperationException {
 		// TODO Auto-generated method stub
-		
+		armTalon.set(val);
 		
 	}
 
 	@Override
 	public Double getState() throws UnsupportedOperationException {
 		// TODO Auto-generated method stub
-		return null;
+		return armTalon.get();
+		
 	}
 
 

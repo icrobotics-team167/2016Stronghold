@@ -11,6 +11,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 	private BallBelt ballBelt;
 	private ShootDrive shootDrive;
 	private LogitechTankController secCont;
+	private DefenseArm defArm;
 	
 	@Override
 	protected void onInit() {
@@ -20,6 +21,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		secCont = new LogitechTankController(3, false);
 		ballBelt = new BallBelt(4, 6);
 		shootDrive = new ShootDrive(3, 7);
+		defArm = new DefenseArm(0);
 	}
 
 	@Override
@@ -47,6 +49,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		
 		ballBelt.setState(beltSpeed);
 		shootDrive.setState(secCont.getAxis(3));
+		defArm.setState(secCont.getAxis(7));
 	}
 	
 }
