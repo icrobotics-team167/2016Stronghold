@@ -19,7 +19,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		drive = new CANRobotDrive(1, 2, 8, 9, DriveType.TANK);
 		autoCont = new EncoderController<>();
 		secCont = new LogitechTankController(3, false);
-		ballBelt = new BallBelt(4, 6, 1);
+		ballBelt = new BallBelt(4, 6, 3);
 		shootDrive = new ShootDrive(3, 7);
 		defArm = new DefenseArm(0, 0, 1);
 	}
@@ -49,7 +49,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		
 		ballBelt.setState(beltSpeed);
 		shootDrive.setState(secCont.getAxis(3));
-		defArm.setState(secCont.getAxis(5) / 3D);
+		defArm.setState(secCont.getAxis(5) * (0.32D + secCont.getAxis(2) / 1.5D));
 	}
 	
 }

@@ -15,6 +15,7 @@ public class ReversableController extends LogitechTankController {
 	
 	@Override
 	public void update() {
+		super.update();
 		if (isPressed(2)) {
 			if (!prevBtnStateReverse) {
 				reverse = !reverse;
