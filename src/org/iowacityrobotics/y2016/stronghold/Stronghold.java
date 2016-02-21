@@ -10,12 +10,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRobotDrive>> {
 
+	/**
+	 * Throttle threshold percentage for defense arm
+	 */
 	private static final double DEF_ARM_SAFE_PERCENT = 0.5D;
+	/**
+	 * Encoder pulse-per-revolution count
+	 */
+	private static final int ENC_COUNT = 360;
+	/**
+	 * Wheel diameter in meters
+	 */
+	private static final double WHEEL_DIAM = 0.079502D;
 	
-	private BallBelt ballBelt;
-	private ShootDrive shootDrive;
+	protected BallBelt ballBelt;
+	protected ShootDrive shootDrive;
+	protected DefenseArm defArm;
+	protected long autoTime = 0L;
 	private LogitechTankController secCont;
-	private DefenseArm defArm;
 	private long backingUp = 0L, buTimer = -1L;
 	private boolean yPressed = false;
 	private AutoSwitcher aSwitch;
@@ -25,6 +37,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		mainCont = new ReversableController(2, false); //true if TANK_RAAF, false if TANK
 		drive = new CANRobotDrive(1, 2, 8, 9, DriveType.TANK);
 		autoCont = new EncoderController<>();
+		drive.getEncoderEngine().calibrate(ENC_COUNT, WHEEL_DIAM);
 		secCont = new LogitechTankController(3, false);
 		ballBelt = new BallBelt(4, 6);
 		shootDrive = new ShootDrive(3, 7);

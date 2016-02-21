@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import org.iowacityrobotics.lib167.control.auto.EncoderController;
 import org.iowacityrobotics.lib167.drive.CANRobotDrive;
 import org.iowacityrobotics.lib167.i2c.MXPDigitBoard;
+import org.iowacityrobotics.lib167.util.MathUtils;
 
 import edu.wpi.first.wpilibj.I2C.Port;
 
@@ -25,8 +26,11 @@ public class AutoSwitcher {
 	/**
 	 * Diameter of the robot's turn, in meters.
 	 */
-	private static final double DIAM = 0.5842D;
-	
+	private static final double DIAM = 0.6858D;
+	private static final double CIRC = DIAM * MathUtils.TWO_PI;
+	private static final double LOW_BAR_ANG = Math.atan2(172D, 80D), LOW_BAR_DIST = Math.hypot(80D, 154D);
+	private static final double SHOOT_CONST = 0.8D * Math.hypot(121D, 22D);
+	private static final double DIST_TO_PT = 4.572D, DIST_FROM_BAR = 6.8326D;	
 	private final Stronghold sh;
 	private List<AutoRoutine> routines = new ArrayList<>();
 	private boolean prevA = false, prevB = false;
@@ -36,27 +40,46 @@ public class AutoSwitcher {
 	private long updateTick = 0L;
 	private MXPDigitBoard cont = new MXPDigitBoard(Port.kMXP, 0x70);
 	
-	public static AutoRoutine generateRegistrator(double driveDist, int stPos) {
+	public static AutoRoutine generateRoutine(double driveDist, int stPos, Stronghold sh) {
 		return new AutoRoutine(c -> {
-			c.queueAction(d -> d.tankDrive(0.75D, 0.75D), driveDist);
-			double angOffset = 0D, arcLen = 0D; // TODO set this to something
-			c.queueAction(d -> d.tankDrive(-0.6 + angOffset, 0.6 - angOffset), arcLen);
-			c.queueAction(d -> {}, d -> false);
+			double centDist = 172D - 50D;
+			double angle = stPos != 0 ? Math.atan2(centDist * (double)stPos, 121) : LOW_BAR_ANG;
+			double sign = Math.signum(angle), arcLen = (angle / MathUtils.TWO_PI) * CIRC;
+			double shootPower = SHOOT_CONST / Math.hypot(stPos != 0 ? centDist : LOW_BAR_DIST, 121);
+			c.queueAction(d -> d.tankDrive(0.75D, 0.75D), driveDist)
+					.queueAction(d -> d.tankDrive(0.4D * sign, -0.4D * sign), arcLen)
+					.queueAction(d -> {
+						sh.autoTime = System.currentTimeMillis();
+						sh.ballBelt.setState(0.2D);
+						sh.shootDrive.setState(-0.35D);
+					}, d -> System.currentTimeMillis() - sh.autoTime > 64L)
+					.queueAction(d -> {
+						sh.autoTime = System.currentTimeMillis();
+						sh.ballBelt.setState(1D);
+						sh.shootDrive.setState(shootPower);
+					}, d -> System.currentTimeMillis() - sh.autoTime > 768L);
 		});
 	}
 	
 	public AutoSwitcher(Stronghold parent) {
 		sh = parent;
 		cont.setBrightness(12);
-		cont.setLEDsEnabled(true);
-	}
-	
-	public void addRoutine(AutoRoutine routine) {
-		routines.add(routine);
+		cont.setLEDsEnabled(true); // TODO portucullis and teeter totter autonomous
+		for (int i = 0; i < 5; i++) {
+			// routines.add(generateRoutine(DIST_TO_PT, i, sh)); // Portucullis
+			routines.add(new AutoRoutine(c -> {}));
+			// routines.add(generateRoutine(DIST_TO_PT, i, sh)); // Teeter-totter
+			routines.add(new AutoRoutine(c -> {}));
+			routines.add(generateRoutine(DIST_TO_PT * 1.6D, i, sh)); // Ramparts
+			routines.add(generateRoutine(DIST_TO_PT * 1.3D, i, sh)); // Moat
+			routines.add(generateRoutine(DIST_TO_PT * 1.6D, i, sh)); // Rough terrain
+			routines.add(generateRoutine(DIST_TO_PT * 2.3D, i, sh)); // Rock wall
+			routines.add(generateRoutine(DIST_FROM_BAR * 1.5D, i, sh)); // Low bar
+		}
 	}
 	
 	public AutoRoutine getRoutine() {
-		return routines.get(defInd * 5 + posInd);
+		return routines.get(posInd * 7 + defInd);
 	}
 	
 	public void update() {
