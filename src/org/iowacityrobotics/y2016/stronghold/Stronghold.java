@@ -6,6 +6,8 @@ import org.iowacityrobotics.lib167.control.auto.EncoderController;
 import org.iowacityrobotics.lib167.drive.CANRobotDrive;
 import org.iowacityrobotics.lib167.drive.DriveType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRobotDrive>> {
 
 	private static final double DEF_ARM_SAFE_PERCENT = 0.5D;
@@ -16,6 +18,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 	private DefenseArm defArm;
 	private long backingUp = 0L, buTimer = -1L;
 	private boolean yPressed = false;
+	private AutoSwitcher aSwitch;
 	
 	@Override
 	protected void onInit() {
@@ -26,13 +29,12 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		ballBelt = new BallBelt(4, 6);
 		shootDrive = new ShootDrive(3, 7);
 		defArm = new DefenseArm(0, 0, 1);
+		aSwitch = new AutoSwitcher(this);
 	}
 
 	@Override
 	protected void onAuto() {
-		autoCont.clearQueue()
-				.queueAction(d -> d.drive(1D, 0D), 5.2D)
-				.queueAction(d -> d.stopMotor(), 0);
+		aSwitch.getRoutine().registerActions(autoCont);
 	}
 
 	@Override
@@ -79,6 +81,16 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		}
 		else
 			yPressed = false;
+	}
+	
+	@Override
+	public void disabledPeriodic() {
+		aSwitch.update();
+	}
+	
+	@Override
+	public void testPeriodic() {
+		SmartDashboard.putNumber("Enc Count", drive.getEncoderEngine().getTotalCount());
 	}
 	
 }
