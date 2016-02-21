@@ -1,4 +1,4 @@
-package org.iowacityrobotics.y2016.stronghold;
+	package org.iowacityrobotics.y2016.stronghold;
 
 import org.iowacityrobotics.lib167.RobotBase;
 import org.iowacityrobotics.lib167.control.LogitechTankController;
@@ -8,6 +8,8 @@ import org.iowacityrobotics.lib167.drive.DriveType;
 
 public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRobotDrive>> {
 
+	private static final double DEF_ARM_SAFE_PERCENT = 0.5D;
+	
 	private BallBelt ballBelt;
 	private ShootDrive shootDrive;
 	private LogitechTankController secCont;
@@ -21,7 +23,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		drive = new CANRobotDrive(1, 2, 8, 9, DriveType.TANK);
 		autoCont = new EncoderController<>();
 		secCont = new LogitechTankController(3, false);
-		ballBelt = new BallBelt(4, 6, 3);
+		ballBelt = new BallBelt(4, 6);
 		shootDrive = new ShootDrive(3, 7);
 		defArm = new DefenseArm(0, 0, 1);
 	}
@@ -45,29 +47,33 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 
 	@Override
 	protected void whileTeleop() {
-		defArm.setState(secCont.getAxis(5) * (0.32D + secCont.getAxis(2) / 1.5D));
+		defArm.setState(secCont.getAxis(5) * (DEF_ARM_SAFE_PERCENT + secCont.getAxis(2) * (0.98D - DEF_ARM_SAFE_PERCENT)));
 		if (backingUp < 1L) {
 			double beltSpeed = -secCont.getAxis(1);
-			if (beltSpeed < 0.1D && beltSpeed > -0.1D)
+			if (Math.abs(beltSpeed) < 0.08D)
 				beltSpeed = 0D;
 			ballBelt.setState(beltSpeed);
 			if (secCont.isPressed(2))
-				shootDrive.setState(-0.4D);
-			else
-				shootDrive.setState(secCont.getAxis(3));
+				shootDrive.setState(-0.7D);
+			else {
+				double shootSpeed = secCont.getAxis(3);
+				if (Math.abs(shootSpeed) < 0.08D)
+					shootSpeed = 0D;
+				shootDrive.setState(shootSpeed);
+			}
 			buTimer = -1L;
 		} else {
 			long currentTime = System.currentTimeMillis();
 			if (buTimer != -1L)
 				backingUp -= currentTime - buTimer;
 			buTimer = currentTime;
-			ballBelt.setState(0.4D);
-			shootDrive.setState(-0.4D);
+			ballBelt.setState(0.2D);
+			shootDrive.setState(-0.35D);
 		}
 		
 		if (secCont.isPressed(4)) {
 			if (!yPressed) {
-				backingUp = 600L;
+				backingUp = 64L;
 				yPressed = true;
 			}
 		}
