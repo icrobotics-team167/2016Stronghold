@@ -3,16 +3,16 @@ package org.iowacityrobotics.y2016.stronghold;
 import org.iowacityrobotics.lib167.component.IComponent;
 import org.iowacityrobotics.lib167.util.MathUtils;
 
-import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.CANTalon;
 
 public class DefenseArm implements IComponent<Double> {
 	
-	private Talon armTalon;
+	private CANTalon armTalon;
 	private final int port;
 	private double val;
 	
-	public DefenseArm(int s, int topLim, int botLim) {
-		armTalon = new Talon(s);
+	public DefenseArm(int s) {
+		armTalon = new CANTalon(s);
 		this.port = s;
 	}
 

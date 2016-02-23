@@ -41,7 +41,7 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		secCont = new LogitechTankController(3, false);
 		ballBelt = new BallBelt(4, 6);
 		shootDrive = new ShootDrive(3, 7);
-		defArm = new DefenseArm(0, 0, 1);
+		defArm = new DefenseArm(10);
 		aSwitch = new AutoSwitcher(this);
 	}
 
