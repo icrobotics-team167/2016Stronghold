@@ -36,7 +36,7 @@ public class AutoSwitcher {
 	private boolean prevA = false, prevB = false;
 	private SelectionState selState;
 	private int defInd = 0, posInd = 0;
-	private int[] teamNumPos = new int[] {0, 1, 2};
+	private int[] teamNumPos = new int[] {0, 1, 2, 3};
 	private long updateTick = 0L;
 	private MXPDigitBoard cont = new MXPDigitBoard(Port.kMXP, 0x70);
 	
@@ -107,6 +107,7 @@ public class AutoSwitcher {
 			cont.putChar(teamNumPos[0], MXPDigitBoard.CHAR_7);
 			cont.putChar(teamNumPos[1], MXPDigitBoard.CHAR_6);
 			cont.putChar(teamNumPos[2], MXPDigitBoard.CHAR_1);
+			cont.putChar(teamNumPos[3], MXPDigitBoard.BLANK);
 			if (updateTick++ % 19L == 0) {
 				for (int i = 0; i < teamNumPos.length; i++)
 					teamNumPos[i] = (teamNumPos[i] + 1) % 4;
@@ -118,6 +119,7 @@ public class AutoSwitcher {
 			cont.putChar(0, MXPDigitBoard.forChar(Integer.toString(defInd + 1).charAt(0)));
 			cont.putChar(1, MXPDigitBoard.BLANK);
 			cont.putChar(2, MXPDigitBoard.BLANK);
+			cont.putChar(3, MXPDigitBoard.BLANK);
 			if (a)
 				defInd = (defInd + 1) % 7;
 			else if (b) {
