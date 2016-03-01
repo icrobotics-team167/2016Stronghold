@@ -6,6 +6,7 @@ import org.iowacityrobotics.lib167.control.auto.EncoderController;
 import org.iowacityrobotics.lib167.drive.CANRobotDrive;
 import org.iowacityrobotics.lib167.drive.DriveType;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRobotDrive>> {
@@ -31,9 +32,11 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 	private long backingUp = 0L, buTimer = -1L;
 	private boolean yPressed = false;
 	private AutoSwitcher aSwitch;
+	private AnalogInput optical;
 	
 	@Override
 	protected void onInit() {
+		optical = new AnalogInput(3);
 		mainCont = new ReversableController(2, false); //true if TANK_RAAF, false if TANK
 		drive = new CANRobotDrive(1, 2, 8, 9, DriveType.TANK);
 		autoCont = new EncoderController<>();
@@ -42,12 +45,12 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		ballBelt = new BallBelt(4, 6);
 		shootDrive = new ShootDrive(3, 7);
 		defArm = new DefenseArm(10);
-		aSwitch = new AutoSwitcher(this);
+		//aSwitch = new AutoSwitcher(this);
 	}
 
 	@Override
 	protected void onAuto() {
-		aSwitch.getRoutine().registerActions(autoCont);
+		//aSwitch.getRoutine().registerActions(autoCont);
 	}
 
 	@Override
@@ -64,10 +67,14 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 	protected void whileTeleop() {
 		defArm.setState(secCont.getAxis(5) * (DEF_ARM_SAFE_PERCENT + secCont.getAxis(2) * (0.98D - DEF_ARM_SAFE_PERCENT)));
 		if (backingUp < 1L) {
-			double beltSpeed = -secCont.getAxis(1);
-			if (Math.abs(beltSpeed) < 0.08D)
-				beltSpeed = 0D;
-			ballBelt.setState(beltSpeed);
+			if (secCont.isPressed(3))
+				ballBelt.setState(-1.0D);
+			else {
+				double beltSpeed = -secCont.getAxis(1);
+				if (Math.abs(beltSpeed) < 0.08D)
+					beltSpeed = 0D;
+				ballBelt.setState(beltSpeed);
+			}
 			if (secCont.isPressed(2))
 				shootDrive.setState(-0.7D);
 			else {
@@ -94,11 +101,14 @@ public class Stronghold extends RobotBase<CANRobotDrive, EncoderController<CANRo
 		}
 		else
 			yPressed = false;
+		
+		boolean isBall = optical.getValue() > 21;
+		SmartDashboard.putBoolean("Ball in Robot", isBall);
 	}
 	
 	@Override
 	public void disabledPeriodic() {
-		aSwitch.update();
+		//aSwitch.update();
 	}
 	
 	@Override

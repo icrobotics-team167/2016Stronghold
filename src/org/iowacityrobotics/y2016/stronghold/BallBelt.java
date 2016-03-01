@@ -30,5 +30,5 @@ public class BallBelt implements IComponent<Double> {
 	public Double getState() throws UnsupportedOperationException {
 		return val;
 	}
-
+	
 }
