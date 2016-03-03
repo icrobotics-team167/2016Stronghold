@@ -1,4 +1,4 @@
-	package org.iowacityrobotics.y2016.stronghold;
+package org.iowacityrobotics.y2016.stronghold;
 
 import org.iowacityrobotics.lib167.RobotBase;
 import org.iowacityrobotics.lib167.control.LogitechTankController;
