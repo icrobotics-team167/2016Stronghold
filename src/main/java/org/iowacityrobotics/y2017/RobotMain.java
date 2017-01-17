@@ -22,14 +22,19 @@ public class RobotMain implements IRobotProgram {
 
     @Override
     public void init(IRobot robot) {
+        // Set up camera server
         IImageProvider cam = robot.getCameraServer().getCamera(CameraType.USB, 0);
         robot.getCameraServer().putImageSource("USB Cam", cam);
-        IOpMode stdMode = robot.getOpManager().getOpMode("standard");
+
+        // Initialize subsystems
         driveJoy = robot.getSystemRegistry().getProvider(DualJoySubsystem.TYPE).getSubsystem(2);
         secJoy = robot.getSystemRegistry().getProvider(DualJoySubsystem.TYPE).getSubsystem(3);
         driveTrain = robot.getSystemRegistry()
                 .getProvider(DualTreadSubsystem.TYPE_CUSTOM)
                 .getSubsystem(QuadraSpeedController.ofCANTalons(1, 2, 8, 9));
+
+        // Create teleop opmode
+        IOpMode stdMode = robot.getOpManager().getOpMode("standard");
         stdMode.onInit(() -> driveTrain.bind(driveJoy.output()
                 .map(DataMappers.invert())
                 .map(DataMappers.throttle(() -> 0.75D))
