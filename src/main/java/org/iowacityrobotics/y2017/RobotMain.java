@@ -3,12 +3,14 @@ package org.iowacityrobotics.y2017;
 import org.iowacityrobotics.roboed.api.IRobot;
 import org.iowacityrobotics.roboed.api.IRobotProgram;
 import org.iowacityrobotics.roboed.api.RobotMode;
+import org.iowacityrobotics.roboed.api.data.Data;
 import org.iowacityrobotics.roboed.api.operations.IOpMode;
 import org.iowacityrobotics.roboed.api.subsystem.ISubsystem;
 import org.iowacityrobotics.roboed.api.vision.CameraType;
 import org.iowacityrobotics.roboed.api.vision.ICameraServer;
 import org.iowacityrobotics.roboed.api.vision.IImageProvider;
 import org.iowacityrobotics.roboed.impl.data.DataMappers;
+import org.iowacityrobotics.roboed.impl.data.Interpolators;
 import org.iowacityrobotics.roboed.impl.subsystem.impl.DualJoySubsystem;
 import org.iowacityrobotics.roboed.impl.subsystem.impl.DualTreadSubsystem;
 import org.iowacityrobotics.roboed.util.collection.Pair;
@@ -37,7 +39,7 @@ public class RobotMain implements IRobotProgram {
         IOpMode stdMode = robot.getOpManager().getOpMode("standard");
         stdMode.onInit(() -> driveTrain.bind(driveJoy.output()
                 .map(DataMappers.invert())
-                .map(DataMappers.throttle(() -> 0.75D))
+                .interpolate(Data.constant(0.75D), Interpolators.throttle())
                 .map(DataMappers.dualJoyTank())));
         stdMode.whileCondition(() -> true);
         robot.getOpManager().setDefaultOpMode(RobotMode.TELEOP, "standard");
