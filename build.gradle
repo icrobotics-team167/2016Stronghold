@@ -1,12 +1,20 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'jaci.openrio.gradle.GradleRIO' version '2017.0.5'
+    id 'jaci.openrio.gradle.GradleRIO' version '2018.01.11'
 }
 
-frc {
-    team = "167"
-    robotClass = "org.iowacityrobotics.roboed.impl.FRCRobot"
+deploy {
+    targets {
+        target('roborio', jaci.openrio.gradle.frc.RoboRIO) {
+            team = 167
+        }
+    }
+    artifacts {
+        artifact('roboed', jaci.openrio.gradle.frc.FRCJavaArtifact) {
+            targets << 'roborio'
+        }
+    }
 }
 
 repositories {
@@ -16,20 +24,17 @@ repositories {
 
 dependencies {
     compile wpilib()
-    compile talonSrx()
-    compile group: 'org.iowacityrobotics.roboed', name: 'RoboED', version: '2017-1.0.0'
-}
-
-def robotManifest = {
-    attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
-    attributes 'Robot-Class': frc.robotClass
+    compile ctre()
+    compile navx()
+    compile group: 'org.iowacityrobotics.roboed', name: 'RoboED', version: '2018-1.0.0'
+    compile fileTree(dir: 'libs', include: '**/*.jar')
 }
 
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest robotManifest
+    manifest jaci.openrio.gradle.GradleRIOPlugin.javaManifest('org.iowacityrobotics.roboed.robot.Robot')
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.2.1'
+    gradleVersion = '4.4.1'
 }
